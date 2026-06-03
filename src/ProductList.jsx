@@ -1,14 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import './ProductList.css';
 import CartItem from './CartItem';
-import { useDispatch } from 'react-redux';
+
+import {
+  useDispatch,
+  useSelector
+} from 'react-redux';
+
 import { addItem } from './CartSlice';
 
 function ProductList({ onHomeClick }) {
 
     const dispatch = useDispatch();
 
+    const CartItems = useSelector(
+        (state) => state.cart.items
+    );
+
     const [showCart, setShowCart] = useState(false);
+
     const [showPlants, setShowPlants] = useState(false);
 
     const [addedToCart, setAddedToCart] = useState({});
@@ -139,6 +149,17 @@ function ProductList({ onHomeClick }) {
         }
     ];
 
+    const calculateTotalQuantity = () => {
+
+        return CartItems
+            ? CartItems.reduce(
+                (total, item) =>
+                    total + item.quantity,
+                0
+            )
+            : 0;
+    };
+
     const styleObj = {
         backgroundColor: '#4CAF50',
         color: '#fff!important',
@@ -184,6 +205,7 @@ function ProductList({ onHomeClick }) {
     };
 
     const handleAddToCart = (product) => {
+
         dispatch(addItem(product));
 
         setAddedToCart((prevState) => ({
@@ -194,16 +216,25 @@ function ProductList({ onHomeClick }) {
 
     return (
         <div>
+
             <div className="navbar" style={styleObj}>
+
                 <div className="tag">
+
                     <div className="luxury">
+
                         <img
                             src="https://cdn.pixabay.com/photo/2020/08/05/13/12/eco-5465432_1280.png"
                             alt=""
                         />
 
-                        <a href="/" onClick={(e) => handleHomeClick(e)}>
+                        <a
+                            href="/"
+                            onClick={(e) => handleHomeClick(e)}
+                        >
+
                             <div>
+
                                 <h3 style={{ color: 'white' }}>
                                     Paradise Nursery
                                 </h3>
@@ -211,13 +242,19 @@ function ProductList({ onHomeClick }) {
                                 <i style={{ color: 'white' }}>
                                     Where Green Meets Serenity
                                 </i>
+
                             </div>
+
                         </a>
+
                     </div>
+
                 </div>
 
                 <div style={styleObjUl}>
+
                     <div>
+
                         <a
                             href="#"
                             onClick={(e) => handlePlantsClick(e)}
@@ -225,26 +262,35 @@ function ProductList({ onHomeClick }) {
                         >
                             Plants
                         </a>
+
                     </div>
 
                     <div>
+
                         <a
                             href="#"
                             onClick={(e) => handleCartClick(e)}
                             style={styleA}
                         >
+
                             <h1 className='cart'>
-                                🛒
+                                🛒 {calculateTotalQuantity()}
                             </h1>
+
                         </a>
+
                     </div>
+
                 </div>
+
             </div>
 
             {!showCart ? (
+
                 <div className="product-grid">
 
                     {plantsArray.map((category, index) => (
+
                         <div key={index}>
 
                             <h1>
@@ -283,24 +329,33 @@ function ProductList({ onHomeClick }) {
                                             onClick={() => handleAddToCart(plant)}
                                             disabled={addedToCart[plant.name]}
                                         >
+
                                             {addedToCart[plant.name]
                                                 ? 'Added to Cart'
                                                 : 'Add to Cart'}
+
                                         </button>
 
                                     </div>
+
                                 ))}
 
                             </div>
+
                         </div>
+
                     ))}
 
                 </div>
+
             ) : (
+
                 <CartItem
                     onContinueShopping={handleContinueShopping}
                 />
+
             )}
+
         </div>
     );
 }
